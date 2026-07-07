@@ -1,0 +1,161 @@
+Kubernetes Objects  / API resources [kubectl api-resources]
+====================================
+
+Pod
+ReplicationController
+ReplicaSet
+DaemonSet
+Deployment
+StatefulSet
+
+namespace
+
+
+
+ConfigMap
+Secret
+
+Service
+NetworkPolicies
+Ingress
+
+
+PersistentVolumeClaim
+PersistentVolume
+
+
+
+
+what is cluster?
+================
+
+It is group of k8s servers/nodes.
+
+what is node?
+=============
+
+
+How to list all k8s resources?
+==============================
+
+kubectl api-resources
+
+
+
+
+kubectl create namespace <NN>
+
+kubectl create ns testing-ns
+
+
+
+k8s nameSpaces
+==============
+In Kubernetes, namespaces are a way to organize and manage resources within a cluster. They help you divide cluster resources between multiple users or teams and can be useful for managing resource quotas, network policies, and access control.
+
+Here are some key commands and YAML examples related to Kubernetes namespaces:
+
+1. Creating a Namespace
+------------------------
+
+
+Create a namespace using a YAML file, as shown earlier:
+
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: my-namespace
+  labels:
+    name: my-namespace
+
+kubectl apply -f namespace.yaml
+
+
+--> Alternatively, you can create a namespace directly from the command line:
+
+kubectl create namespace my-namespace
+
+
+
+
+
+
+
+
+2. Listing Namespaces
+---------------------
+
+kubectl get namespaces  or kubectl get ns
+
+
+3. Viewing Namespace Details
+-----------------------------
+
+To get detailed information about a specific namespace:
+
+kubectl describe ns my-namespace
+
+
+
+
+
+
+
+4. Deleting a Namespace
+-----------------------
+
+To delete a namespace (along with all the resources within it):
+
+kubectl delete namespace my-namespace
+
+
+
+
+
+
+
+
+5. Using Namespaces in Resource Definitions
+---------------------------------------------
+
+
+When defining resources (like Pods, Services, Deployments) in YAML files, you specify the namespace under the metadata section:
+
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: my-pod
+  namespace: my-namespace
+spec:
+  containers:
+  - name: ngnix123
+    image: nginx
+
+
+
+kubectl apply -f pod.yaml
+
+
+6. Switching Namespaces in kubectl Context
+--------------------------------------------
+
+kubectl config set-context --current --namespace=test
+
+7. Namespace Resource Quotas
+-----------------------------
+
+You can define resource quotas and limits per namespace to control the usage of resources:
+
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: my-resource-quota
+  namespace: test
+spec:
+  hard:
+    pods: "10"
+
+
+kubectl apply -f quota.yaml
+
