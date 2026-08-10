@@ -1,0 +1,142 @@
+#1.mongodb-svc-novol.yaml
+
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata: 
+  name: mongodb
+  namespace: prod
+spec:
+  replicas: 1
+  selector: 
+    matchLabels:
+      app: mongodb
+  template:
+    metadata:
+      labels:
+        app: mongodb
+    spec:
+      containers:
+      - name: mongocon
+        image: mongo:8.0.9-noble
+        ports:
+        - containerPort: 27017
+        env:
+        - name: MONGO_INITDB_ROOT_USERNAME
+          value: singup#user
+        - name: MONGO_INITDB_ROOT_PASSWORD
+          value: signup#pass
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongosvc
+  namespace: prod
+spec:
+  type: ClusterIP
+  selector:
+    app: mongodb
+  ports:
+    - port: 27017
+      targetPort: 27017
+
+
+
+================================
+
+
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: signuplogindeployv1-lb
+  namespace: prod 
+spec:
+  replicas: 1
+  selector: 
+    matchLabels:
+      app: signuploginappv1-lb
+  template:
+    metadata:
+      labels:
+        app: signuploginappv1-lb
+    spec:  
+      containers:
+      - name: signuploginconv1-lb
+        image: kkeducation12345/spring-app:1.0.0
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+        env:
+        - name: MONGO_DB_HOSTNAME
+          value: mongosvc
+        - name: MONGO_DB_USERNAME
+          value: singup#user
+        - name: MONGO_DB_PASSWORD
+          value: signup#pass
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: signuploginsvcv1-lb
+  namespace: prod
+spec:
+  type: ClusterIP
+  selector:
+    app: signuploginappv1-lb
+  ports:
+  - port: 80
+    targetPort: 8080
+
+
+
+
+  ==========================
+
+
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: signuplogindeployv2-lb
+  namespace: prod 
+spec:
+  replicas: 1
+  selector: 
+    matchLabels:
+      app: signuploginappv2-lb
+  template:
+    metadata:
+      labels:
+        app: signuploginappv2-lb
+    spec:  
+      containers:
+      - name: signuploginconv2-lb
+        image: ksk5940/signup-mongodb:v2.0.0
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+        env:
+        - name: MONGO_DB_HOSTNAME
+          value: mongosvc
+        - name: MONGO_DB_USERNAME
+          value: singup#user
+        - name: MONGO_DB_PASSWORD
+          value: signup#pass
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: signuploginsvcv2-lb
+  namespace: prod
+spec:
+  type: ClusterIP
+  selector:
+    app: signuploginappv2-lb
+  ports:
+  - port: 80
+    targetPort: 8080
+
+
+
